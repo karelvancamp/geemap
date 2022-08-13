@@ -289,7 +289,7 @@ class Map(ipyleaflet.Map):
             return
 
         def get_community_example(asset_id):
-            asset_info = search_ee_data(asset_id, source='community')
+            asset_info = search_ee_data(asset_id, source='community')[0]
             code_link = asset_info["sample_code"]
             code_id = code_link.replace('https://code.earthengine.google.com/','')
             try:
