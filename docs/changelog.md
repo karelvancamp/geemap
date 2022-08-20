@@ -1,5 +1,30 @@
 # Changelog
 
+## v0.16.7 - Aug 19, 2022
+
+**Improvement**:
+
+-   Fixed ee service account authentication bug
+
+## v0.16.6 - Aug 19, 2022
+
+**New Features**:
+
+-   Added auth support for ee service account [#1220](https://github.com/giswqs/geemap/pull/1220)
+-   Added a mosaic function [#1219](https://github.com/giswqs/geemap/pull/1219)
+-   Added download_ned function [#1218](https://github.com/giswqs/geemap/pull/1218)
+
+## v0.16.5 - Aug 16, 2022
+
+**Improvement**:
+
+-   Add band param for image_count [#1209](https://github.com/giswqs/geemap/issues/1209)
+-   Improved exporting image to asset [#1208](https://github.com/giswqs/geemap/issues/1208)
+-   Fixed Sentinel-1 timelapse bug [#1210](https://github.com/giswqs/geemap/issues/1210)
+-   Fixed pie chart Windows bug
+-   Added popup fields for add_geojson
+-   Updated zonal stats function
+
 ## v0.16.4 - Aug 11, 2022
 
 **New Features**:
