@@ -4961,6 +4961,20 @@ def get_all_timeseries():
         end_date=end_date[5:]
         return sentinel2_timeseries(start_year=start,end_year=end,start_date=start_date,end_date=end_date,**kwargs)
 
+    def modis_ts(start_date,end_date,**kwargs):
+        start = datetime.datetime.strptime(start_date, "%Y-%m-%d").year
+        end = datetime.datetime.strptime(end_date, "%Y-%m-%d").year
+        start_date=start_date[5:]
+        end_date=end_date[5:]
+        return modis_timeseries(start_year=start,end_year=end,start_date=start_date,end_date=end_date,**kwargs)
+
+    modis_vars = {
+        "name": "MODIS Monthly",
+        "def": modis_ts,
+        "pars": {
+        }
+        }
+
     goes_vars = {
         "name": "{} {} {}",
         "def": goes_timeseries,
@@ -5039,7 +5053,6 @@ def get_all_timeseries():
             full_.append((name, dict_["def"], params))
         return full_
 
-    vars_ = [goes_vars, goes_fire_vars, landsat_vars, sentinel1_vars, sentinel2_vars, naip_vars, dynamic_vars]
-
+    vars_ = [modis_vars, goes_vars, goes_fire_vars, landsat_vars, sentinel1_vars, sentinel2_vars, naip_vars, dynamic_vars]
     all_vars = [defx for var in vars_ for defx in parse_vars(var)]
     return all_vars
