@@ -4913,3 +4913,133 @@ def sentinel1_timelapse(
         mp4,
         fading,
     )
+
+
+## Define defaults for non standard input args
+# 
+# Not all .*_timeseries defs have same input arguments as create_timeseries
+# To avoid GUI hooks for data source specific variables
+# a timeseries dictionary can be build of valid permutations.
+# dictionary contains function to call, and parameters.
+# 
+# In order to avoid excess growth in dictionary, not all parameters should be used
+
+def get_all_timeseries():
+    """
+    Generates a list of usefull combinations of specific timeseries and parameters.
+    When using these defauts,
+    The only parameters required for any of these functions are
+        roi, start_date, end_date
+
+    Returns:
+        list: A list it tuples. Each tuple contains a name (str), function (def) and default parameters (dict)
+    """
+
+    def naip_ts(start_date, end_date, **kwargs):
+        start = datetime.datetime.strptime(start_date, "%Y-%m-%d").year
+        end = datetime.datetime.strptime(end_date, "%Y-%m-%d").year
+        return naip_timeseries(start_year=start, end_year=end, **kwargs)
+
+    def landsat_ts(start_date,end_date,**kwargs):
+        start = datetime.datetime.strptime(start_date, "%Y-%m-%d").year
+        end = datetime.datetime.strptime(end_date, "%Y-%m-%d").year
+        start_date=start_date[5:]
+        end_date=end_date[5:]
+        return landsat_timeseries(start_year=start,end_year=end,start_date=start_date,end_date=end_date,**kwargs)
+
+    def sentinel1_ts(start_date,end_date,**kwargs):
+        start = datetime.datetime.strptime(start_date, "%Y-%m-%d").year
+        end = datetime.datetime.strptime(end_date, "%Y-%m-%d").year
+        start_date=start_date[5:]
+        end_date=end_date[5:]
+        return sentinel1_timeseries(start_year=start,end_year=end,start_date=start_date,end_date=end_date,**kwargs)
+
+    def sentinel2_ts(start_date,end_date,**kwargs):
+        start = datetime.datetime.strptime(start_date, "%Y-%m-%d").year
+        end = datetime.datetime.strptime(end_date, "%Y-%m-%d").year
+        start_date=start_date[5:]
+        end_date=end_date[5:]
+        return sentinel2_timeseries(start_year=start,end_year=end,start_date=start_date,end_date=end_date,**kwargs)
+
+    goes_vars = {
+        "name": "{} {} {}",
+        "def": goes_timeseries,
+        "pars": {
+        "data":{"GOES-17":"GOES-17","GOES-16":"GOES-16"}, 
+        "scan":{"Full disk":"full_disk", "Conus":"conus", "Mesoscale":"mesoscale"}, 
+        "show_night":{"":[False, "a_mode"], "Night A":[True,"a_mode"], "Night B":[True, "b_mode"]},
+        }
+        }
+
+    goes_fire_vars = {
+        "name": "{} Fire {}",
+        "def": goes_fire_timeseries,
+        "pars": {
+        "data":{"GOES-17":"GOES-17","GOES-16":"GOES-16"}, 
+        "scan":{"Full disk":"full_disk", "Conus":"conus"}, 
+        }
+        }
+
+    naip_vars = {
+        "name": "NAIP Annual {}",
+        "def": naip_ts,
+        "pars": {
+        "RGBN": {"":False, "4 Band":True},
+        }
+        }
+
+    landsat_vars = {
+        "name": "Landsat {} {}",
+        "def": landsat_ts,
+        "pars": {
+        "frequency":{"Yearly":"year","Quarterly":"quarter","Monthly":"month"}, 
+        "apply_fmask":{"Masked":True, "Raw":False,}, 
+        }
+        }
+
+    sentinel2_vars = {
+        "name": "Sentinel2 {}{} {}",
+        "def": sentinel2_ts,
+        "pars": {
+        "frequency": {"Yearly":"year","Quarterly":"quarter","Monthly":"month"}, 
+        "drop_empty": {"":False},
+        "mask_cloud": {"Cloudless":True, "Clouded":False},
+        }
+        }
+
+    dynamic_vars = {
+        "name": "Dynamic World {}{} {}",
+        "def": dynamic_world_timeseries,
+        "pars": {
+        "frequency": {"Yearly":"year","Quarterly":"quarter","Monthly":"month"}, 
+        "drop_empty": {"":False}, 
+        "return_type": {"Topological":"hillshade", "":"visualize", "Probabilistic":"probability"}
+        }
+        }
+
+    sentinel1_vars = {
+        "name": "Sentinel1 {} {}",
+        "def": sentinel1_ts,
+        "pars": {
+        "frequency": {"Yearly":"year","Quarterly":"quarter","Monthly":"month"}, 
+        "band": {"Land":"VV", "Sea and Ice":"HV"},
+        }
+        }
+
+    def parse_vars(dict_):
+        from itertools import product
+        for ki,di in dict_["pars"].items():
+            dict_["pars"][ki] = list((ki,k,v) for k,v in di.items())
+        products = product(*dict_["pars"].values())  
+        full_ = []
+        for sample in products:
+            labels = [x[1] for x in sample]
+            name = dict_["name"].format(*labels)
+            params = {x[0]:x[2] for x in sample}
+            full_.append((name, dict_["def"], params))
+        return full_
+
+    vars_ = [goes_vars, goes_fire_vars, landsat_vars, sentinel1_vars, sentinel2_vars, naip_vars, dynamic_vars]
+
+    all_vars = [defx for var in vars_ for defx in parse_vars(var)]
+    return all_vars
