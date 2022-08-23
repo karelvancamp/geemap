@@ -4995,7 +4995,7 @@ def get_all_timeseries():
         }
 
     naip_vars = {
-        "name": "NAIP Annual {}",
+        "name": "NAIP Yearly {}",
         "def": naip_ts,
         "pars": {
         "RGBN": {"":False, "4 Band":True},
@@ -5012,7 +5012,7 @@ def get_all_timeseries():
         }
 
     sentinel2_vars = {
-        "name": "Sentinel2 {}{} {}",
+        "name": "Sentinel-2 {}{} {}",
         "def": sentinel2_ts,
         "pars": {
         "frequency": {"Yearly":"year","Quarterly":"quarter","Monthly":"month"}, 
@@ -5032,7 +5032,7 @@ def get_all_timeseries():
         }
 
     sentinel1_vars = {
-        "name": "Sentinel1 {} {}",
+        "name": "Sentinel-1 {} {}",
         "def": sentinel1_ts,
         "pars": {
         "frequency": {"Yearly":"year","Quarterly":"quarter","Monthly":"month"}, 
